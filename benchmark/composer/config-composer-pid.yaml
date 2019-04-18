@@ -6,7 +6,7 @@ test:
     type: local
     number: 2
   rounds:
-  - label: basic-sample-network
+  - label: healthcare-network
     txNumber:
     - 25
     trim: 0
@@ -16,8 +16,8 @@ test:
         tps: 5
     arguments:
       testAssets: 25
-    callback: benchmark/composer/composer-samples/basic-sample-network.js
-  - label: basic-sample-network
+    callback: benchmark/composer/composer-samples/healthcare-network.js
+  - label: healthcare-network
     txNumber:
     - 50
     trim: 0
@@ -31,7 +31,7 @@ test:
         derrivative: 0.1
     arguments:
       testAssets: 50
-    callback: benchmark/composer/composer-samples/basic-sample-network.js
+    callback: benchmark/composer/composer-samples/healthcare-network.js
 monitor:
   type:
   - docker
