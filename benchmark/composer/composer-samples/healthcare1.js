@@ -46,6 +46,7 @@ module.exports.init = async function(blockchain, context, args) {
     let medicalInfos = new Array();
 
     switch(testTransaction) {
+        case 'RevokePermission':
         case 'GivePermission':    
         patient = factory.newResource(base_ns, 'Patient', 'Patient_0');
         patient.firstName = "Peter";
@@ -70,7 +71,7 @@ module.exports.init = async function(blockchain, context, args) {
         default:
         throw new Error('No valid test Transaction specified');
     }
-
+    logger.info("populated "+populated)
     try{
         if(!populated){
             logger.info('Adding test assets ...');
@@ -103,15 +104,18 @@ module.exports.init = async function(blockchain, context, args) {
 
 module.exports.run = function() {
     let transaction;
-    // let i= testAssetNum--;
+    let i= --testAssetNum;
     switch (testTransaction) {
+    case 'RevokePermission':
+        transaction = factory.newTransaction(base_ns, 'RevokePermission');
+        transaction.asset = factory.newRelationship(base_ns, 'MedicalInfo', 'MedicalInfo_'+i );
+        transaction.doctorId = 'Doctor_'+i ;       
+        return  bc.bcObj.submitTransaction(busNetConnections.get('admin' ), transaction);
+
     case 'GivePermission': 
         transaction = factory.newTransaction(base_ns, 'GivePermission');
-        transaction.asset = factory.newRelationship(base_ns, 'MedicalInfo', 'MedicalInfo_0' );
-        transaction.doctorId = 'Doctor_0' ;  
-        logger.info('GIVEPERMISSION:'+transaction)
-        logger.info(transaction.asset)
-        logger.info(transaction.doctorId)
+        transaction.asset = factory.newRelationship(base_ns, 'MedicalInfo', 'MedicalInfo_'+i );
+        transaction.doctorId = 'Doctor_'+i ;  
         return  bc.bcObj.submitTransaction(busNetConnections.get('admin' ), transaction);
         // return  bc.bcObj.submitTransaction(busNetConnection, transaction);   
     default: 

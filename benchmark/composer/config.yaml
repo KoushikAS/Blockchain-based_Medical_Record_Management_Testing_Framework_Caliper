@@ -8,16 +8,16 @@ test:
   rounds:
   - label: healthcare
     txNumber:
-    - 50
+    - 10
     trim: 0
     rateControl:
     - type: fixed-rate
       opts:
         tps: 10
     arguments:
-      testAssets: 1
+      testAssets: 10
       transaction: GivePermission
-    callback: benchmark/composer/composer-samples/healthcare1.js
+    callback: benchmark/composer/composer-samples/healthcare1.js  
   monitor:
   type:
   - docker
