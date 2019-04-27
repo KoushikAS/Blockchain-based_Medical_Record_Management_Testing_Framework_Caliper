@@ -1,5 +1,7 @@
 'use strict';
 
+//config.yaml - txNumber: #times run() should be implmented
+
 const removeExisting = require('../composer-test-utils').clearAll;
 const composerUtils = require('../../../src/adapters/composer/composer_utils');
 const logger = require('../../../src/comm/util').getLogger('healthcare.js');
@@ -10,6 +12,7 @@ module.exports.info  = 'Healthcaare Network Performance Test';
 
 let bc;
 let busNetConnections;
+// let busNetConnection;
 let testAssetNum;
 let testTransaction;
 let factory;
@@ -23,14 +26,20 @@ module.exports.init = async function(blockchain, context, args) {
     bc = blockchain;
     busNetConnections = new Map();
     busNetConnections.set('admin', context);
-    testAssetNum = args.testAssets;
+    // busNetConnection = context;
+    testAssetNum = args.testAssets;         //config.yaml - testAssets mapped to args.testAssets
     testTransaction = args.transaction;
 
     factory = busNetConnections.get('admin').getBusinessNetwork().getFactory();
+    // factory = busNetConnection.getBusinessNetwork().getFactory();
 
     let doctorRegistry = await busNetConnections.get('admin').getParticipantRegistry(base_ns + '.Doctor');
     let patientRegistry = await busNetConnections.get('admin').getParticipantRegistry(base_ns + '.Patient');  
     let medicalInfoRegistry = await busNetConnections.get('admin').getAssetRegistry(base_ns + '.MedicalInfo'); 
+
+    // let doctorRegistry = await busNetConnection.getParticipantRegistry(base_ns + '.Doctor');
+    // let patientRegistry = await busNetConnection.getParticipantRegistry(base_ns + '.Patient');  
+    // let medicalInfoRegistry = await busNetConnection.getAssetRegistry(base_ns + '.MedicalInfo'); 
 
     let doctor= new Array();
     let patients = new Array();
@@ -57,7 +66,7 @@ module.exports.init = async function(blockchain, context, args) {
 
         populated = await patientRegistry.exists(patients[0].getIdentifier());
 
-        break;
+        break;  transaction.asset = factory.newRelationship(base_ns, 'MedicalInfo', 'MedicalInfo_0' );
         default:
         throw new Error('No valid test Transaction specified');
     }
@@ -94,13 +103,17 @@ module.exports.init = async function(blockchain, context, args) {
 
 module.exports.run = function() {
     let transaction;
+    // let i= testAssetNum--;
     switch (testTransaction) {
     case 'GivePermission': 
         transaction = factory.newTransaction(base_ns, 'GivePermission');
-        transaction.MedicalInfo = factory.newRelationship(base_ns, 'MedicalInfo', 'MedicalInfo_0' );
+        transaction.asset = factory.newRelationship(base_ns, 'MedicalInfo', 'MedicalInfo_0' );
         transaction.doctorId = 'Doctor_0' ;  
         logger.info('GIVEPERMISSION:'+transaction)
-        return  bc.bcObj.submitTransaction(busNetConnections.get('admin' ), transaction);   
+        logger.info(transaction.asset)
+        logger.info(transaction.doctorId)
+        return  bc.bcObj.submitTransaction(busNetConnections.get('admin' ), transaction);
+        // return  bc.bcObj.submitTransaction(busNetConnection, transaction);   
     default: 
         throw new Error('No valid test Transaction specified');
     }
