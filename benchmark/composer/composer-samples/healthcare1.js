@@ -8,7 +8,7 @@ const logger = require('../../../src/comm/util').getLogger('healthcare.js');
 const os = require('os');
 const uuid = os.hostname() + process.pid; // UUID for client within test
 
-module.exports.info  = 'Healthcaare Network Performance Test';
+module.exports.info  = 'Healthcare Network Performance Test';
 
 let bc;
 let busNetConnections;
@@ -48,7 +48,7 @@ module.exports.init = async function(blockchain, context, args) {
     switch(testTransaction) {
         case 'RevokePermission':
         case 'GivePermission':    
-        patient = factory.newResource(base_ns, 'Patient', 'Patient_0');
+        patient = factory.newResource(base_ns, 'Patient', 'Patient_'+testTransaction);
         patient.firstName = "Peter";
         patient.lastName = "Parker";
         patient.age = "18";
@@ -57,8 +57,8 @@ module.exports.init = async function(blockchain, context, args) {
         patients.push(patient);
 
         for(let i = 0; i < testAssetNum; i ++){
-            let medicalInfo = factory.newResource(base_ns,  'MedicalInfo', 'MedicalInfo_' + i);
-            medicalInfo.owner = factory.newRelationship(base_ns, 'Patient', 'Patient_0');
+            let medicalInfo = factory.newResource(base_ns,  'MedicalInfo', 'MedicalInfo_'+ testTransaction + i);
+            medicalInfo.owner = factory.newRelationship(base_ns, 'Patient', 'Patient_'+testTransaction);
             medicalInfo.medication = 'Spider Bite Medicine';
             medicalInfo.pastVisitsArray = [];
             medicalInfo.permissionedDoctorsId = [];
@@ -67,7 +67,7 @@ module.exports.init = async function(blockchain, context, args) {
 
         populated = await patientRegistry.exists(patients[0].getIdentifier());
 
-        break;  transaction.asset = factory.newRelationship(base_ns, 'MedicalInfo', 'MedicalInfo_0' );
+        break;  
         default:
         throw new Error('No valid test Transaction specified');
     }
@@ -92,7 +92,7 @@ module.exports.init = async function(blockchain, context, args) {
         }
 
         logger.info('About to create new patient card');
-        let userName = 'PatientCard_0';
+        let userName = 'PatientCard_'+ testTransaction;
         let newConnection = await composerUtils.obtainConnectionForParticipant(busNetConnections.get('admin'), busNetName, patient, userName);
         busNetConnections.set(userName, newConnection);        
 
@@ -108,13 +108,13 @@ module.exports.run = function() {
     switch (testTransaction) {
     case 'RevokePermission':
         transaction = factory.newTransaction(base_ns, 'RevokePermission');
-        transaction.asset = factory.newRelationship(base_ns, 'MedicalInfo', 'MedicalInfo_'+i );
+        transaction.asset = factory.newRelationship(base_ns, 'MedicalInfo', 'MedicalInfo_'+ testTransaction +i );
         transaction.doctorId = 'Doctor_'+i ;       
         return  bc.bcObj.submitTransaction(busNetConnections.get('admin' ), transaction);
 
     case 'GivePermission': 
         transaction = factory.newTransaction(base_ns, 'GivePermission');
-        transaction.asset = factory.newRelationship(base_ns, 'MedicalInfo', 'MedicalInfo_'+i );
+        transaction.asset = factory.newRelationship(base_ns, 'MedicalInfo', 'MedicalInfo_'+ testTransaction +i );
         transaction.doctorId = 'Doctor_'+i ;  
         return  bc.bcObj.submitTransaction(busNetConnections.get('admin' ), transaction);
         // return  bc.bcObj.submitTransaction(busNetConnection, transaction);   
