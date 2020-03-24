@@ -1,6 +1,6 @@
 ## Blockchain-based_Medical_Record_Management_Testing_Framework_Caliper
 
-Welcome to the Blockchain-based_Medical_Record_Management_Testing_Framework_Caliper project. Caliper is a blockchain performance benchmark framework, which allows users to test different blockchain solutions with predefined use cases, and get a set of performance test results. This is used to test performance indicators of [Blockchain-based Medical Records Management System(https://github.com/KoushikAS/Blockchain-based_Medical_Records_Management_System).
+Welcome to the Blockchain-based_Medical_Record_Management_Testing_Framework_Caliper project. Caliper is a blockchain performance benchmark framework, which allows users to test different blockchain solutions with predefined use cases, and get a set of performance test results. This is used to test performance indicators of [Blockchain-based Medical Records Management System](https://github.com/KoushikAS/Blockchain-based_Medical_Records_Management_System).
 
 Currently performance indicators tested are:
 * Success rate
